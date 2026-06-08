@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReelBoost — Premium Payment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --card:      #18181f;
+      --border:    #2a2a38;
+      --accent:    #7c3aed;
+      --accent2:   #a855f7;
+      --gold:      #f59e0b;
+      --gold2:     #fbbf24;
+      --green:     #10b981;
+      --text:      #f0f0f8;
+      --muted:     #9090b0;
+      --radius:    14px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.18) 0%, transparent 70%),
+        var(--bg);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .logo-badge span { font-size: 16px; }
+    h1 {
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    /* ── ORDER BADGE ── */
+    .order-info {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 26px;
+    }
+    .info-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .info-pill .val {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      color: var(--gold);
+    }
+
+    /* ── STEPS ── */
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 26px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .step-num {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      color: var(--muted);
+      transition: all .3s;
+    }
+    .step.active .step-num  { background: var(--accent); border-color: var(--accent2); color: #fff; }
+    .step.done   .step-num  { background: var(--green);  border-color: var(--green);   color: #fff; }
+    .step-label { font-size: 10px; color: var(--muted); text-align: center; }
+    .step-line {
+      flex: none;
+      width: 24px; height: 2px;
+      background: var(--border);
+      margin-top: 15px;
+      border-radius: 2px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title em { color: var(--accent2); font-style: normal; font-size: 15px; }
+
+    /* ── QR SECTION ── */
+    .qr-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .qr-frame {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      width: 200px; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.3), 0 0 40px rgba(124,58,237,0.15);
+    }
+    .qr-frame img {
+      width: 172px; height: 172px;
+      object-fit: contain;
+    }
+    .qr-placeholder {
+      width: 172px; height: 172px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; color: #999; font-size: 12px;
+      text-align: center;
+    }
+    .qr-placeholder svg { opacity: 0.4; }
+    .scan-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .amount-display {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      padding: 10px 24px;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .amount-display small { font-size: 13px; opacity: 0.8; font-weight: 600; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    input, textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      padding: 12px 14px;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+      resize: none;
+    }
+    input::placeholder, textarea::placeholder { color: #484860; }
+    input:focus, textarea:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+    }
+    .input-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ── BUTTON ── */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: all .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    }
+    .btn-primary:hover  { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(124,58,237,0.55); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--muted);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+    /* ── SUCCESS ── */
+    .success-view { display: none; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 0 40px rgba(16,185,129,0.3);
+    }
+    .success-title { font-size: 22px; font-weight: 800; color: var(--green); }
+    .success-sub   { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.6; }
+    .order-summary {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      width: 100%;
+      max-width: 320px;
+      text-align: left;
+      font-size: 13px;
+    }
+    .order-summary .row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .order-summary .row:last-child { border-bottom: none; }
+    .order-summary .row .k { color: var(--muted); }
+    .order-summary .row .v { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); }
+
+    /* ── ERROR ── */
+    .error-msg {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #fca5a5;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* ── TELEGRAM NOTICE ── */
+    .tg-notice {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(37,99,235,0.1);
+      border: 1px solid rgba(37,99,235,0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #93c5fd;
+      width: 100%; max-width: 480px;
+      margin-top: 4px;
+    }
+    .tg-notice .icon { font-size: 20px; flex-shrink: 0; }
+
+    footer {
+      margin-top: 32px;
+      font-size: 11px;
+      color: #444460;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-badge"><span>🎬</span> ReelBoost</div>
+    <h1>Premium Views<br/>Payment Portal</h1>
+    <p class="subtitle">Secure · Instant · Verified by Admin</p>
+  </div>
+
+  <!-- ORDER PILLS (populated from URL params) -->
+  <div class="order-info" id="orderInfo"></div>
+
+  <!-- STEP INDICATOR -->
+  <div class="steps" id="stepIndicator">
+    <div class="step active" id="s1"><div class="step-num">1</div><div class="step-label">Scan & Pay</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="s2"><div class="step-num">2</div><div class="step-label">Order Details</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="s3"><div class="step-num">3</div><div class="step-label">Confirm</div></div>
+  </div>
+
+  <!-- ═══════ MAIN FORM ═══════ -->
+  <div id="mainForm" style="width:100%;max-width:480px;display:flex;flex-direction:column;gap:0;">
+
+    <!-- STEP 1: QR + Amount -->
+    <div class="card" id="step1card">
+      <div class="card-title"><em>📱</em> Scan QR to Pay</div>
+      <div class="qr-wrap">
+        <div class="qr-frame">
+          <img id="qrImg" src="qr.png" alt="Payment QR Code"
+               onerror="this.style.display='none'; document.getElementById('qrFallback').style.display='flex';" />
+          <div id="qrFallback" class="qr-placeholder" style="display:none;">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <path d="M14 14h2v2h-2zM18 14h3v2h-3zM14 18h2v3h-2zM18 18h3v3h-3z"/>
+            </svg>
+            <span>qr.png<br/>not found</span>
+          </div>
+        </div>
+        <p class="scan-label">Use PhonePe · GPay · Paytm · UPI</p>
+        <div class="amount-display" id="amountDisplay"><small>₹</small> <span id="amtVal">—</span></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Form fields -->
+    <div class="card" id="step2card">
+      <div class="card-title"><em>✍️</em> Fill in Order Details</div>
+
+      <div class="form-group">
+        <label>Instagram Reel URL</label>
+        <input type="url" id="reelUrl" placeholder="https://www.instagram.com/reel/xxxxx/" autocomplete="off" />
+        <p class="input-hint">Paste the full link to the reel you want to boost</p>
+      </div>
+
+      <div class="form-group">
+        <label>Transaction ID / UTR Number</label>
+        <input type="text" id="txnId" placeholder="e.g. 4241XXXXXX or T2506XXXXXX" autocomplete="off" />
+        <p class="input-hint">Copy the 12-digit UTR / Transaction ID from your payment app</p>
+      </div>
+
+      <div id="formError" class="error-msg">⚠️ Please fill in all fields correctly.</div>
+
+      <button class="btn btn-primary" id="submitBtn" onclick="handleSubmit()">
+        🚀 Submit Order to Bot
+      </button>
+      <button class="btn btn-secondary" onclick="window.history.back()">✕ Cancel</button>
+    </div>
+
+    <!-- TELEGRAM NOTICE -->
+    <div class="tg-notice">
+      <div class="icon">ℹ️</div>
+      <div>After submitting, go back to the Telegram bot and tap <strong>"I've Paid — Submit Order"</strong> to complete the process.</div>
+    </div>
+
+  </div>
+
+  <!-- ═══════ SUCCESS VIEW ═══════ -->
+  <div class="success-view" id="successView">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Order Submitted!</div>
+    <p class="success-sub">Your premium order has been submitted for admin approval. You'll receive a Telegram notification once it's processed.</p>
+    <div class="order-summary" id="successSummary"></div>
+    <button class="btn btn-secondary" style="max-width:320px;margin-top:8px;" onclick="window.close()">
+      Close & Return to Telegram
+    </button>
+  </div>
+
+  <footer>© ReelBoost · Premium Views Service · Powered by AstroBoost</footer>
+
+  <script>
+    // ── Parse URL params ──────────────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const uid    = params.get('uid')    || '';
+    const views  = params.get('views')  || '';
+    const amount = params.get('amount') || '';
+
+    // Populate order pills
+    const pillsEl = document.getElementById('orderInfo');
+    if (views)  pillsEl.innerHTML += `<div class="info-pill">📺 Views <span class="val">${Number(views).toLocaleString()}</span></div>`;
+    if (amount) pillsEl.innerHTML += `<div class="info-pill">💵 Amount <span class="val">₹${amount}</span></div>`;
+    if (uid)    pillsEl.innerHTML += `<div class="info-pill">🆔 User <span class="val">${uid}</span></div>`;
+    if (!views && !amount) pillsEl.innerHTML = `<div class="info-pill" style="color:#fbbf24">⚠️ Open this link from the Telegram bot for order details</div>`;
+
+    // Populate amount display
+    document.getElementById('amtVal').textContent = amount ? Number(amount).toLocaleString() : '—';
+
+    // Pre-fill hidden fields if params present
+    // ─────────────────────────────────────────────
+
+    // ── Step indicator helper ────────────────────
+    function setStep(n) {
+      [1,2,3].forEach(i => {
+        document.getElementById('s'+i).className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+      });
+    }
+
+    // Observe form fill to advance steps
+    const reelInput = document.getElementById('reelUrl');
+    const txnInput  = document.getElementById('txnId');
+
+    reelInput.addEventListener('input', () => {
+      setStep(reelInput.value.trim() ? 2 : 1);
+    });
+    txnInput.addEventListener('input', () => {
+      if (txnInput.value.trim() && reelInput.value.trim()) setStep(3);
+    });
+
+    // ── Submit ───────────────────────────────────
+    function handleSubmit() {
+      const reel = reelInput.value.trim();
+      const txn  = txnInput.value.trim();
+      const err  = document.getElementById('formError');
+
+      if (!reel || !txn) {
+        err.style.display = 'block';
+        err.textContent = '⚠️ Both fields are required.';
+        return;
+      }
+      if (!reel.includes('instagram.com') || !reel.includes('reel')) {
+        err.style.display = 'block';
+        err.textContent = '⚠️ Please enter a valid Instagram Reel link.';
+        return;
+      }
+      if (txn.length < 8) {
+        err.style.display = 'block';
+        err.textContent = '⚠️ Transaction ID seems too short. Please double-check.';
+        return;
+      }
+      err.style.display = 'none';
+
+      // Disable button
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Submitting...';
+
+      // Store in sessionStorage so user can share with bot
+      sessionStorage.setItem('rb_reel', reel);
+      sessionStorage.setItem('rb_txn',  txn);
+      sessionStorage.setItem('rb_views', views);
+      sessionStorage.setItem('rb_amount', amount);
+      sessionStorage.setItem('rb_uid', uid);
+
+      // Show success after brief delay (actual submission happens back in bot)
+      setTimeout(() => {
+        document.getElementById('mainForm').style.display    = 'none';
+        document.getElementById('stepIndicator').style.display = 'none';
+        const sv = document.getElementById('successView');
+        sv.style.display = 'flex';
+
+        document.getElementById('successSummary').innerHTML = `
+          <div class="row"><span class="k">📺 Views</span><span class="v">${Number(views||0).toLocaleString()}</span></div>
+          <div class="row"><span class="k">💵 Amount</span><span class="v">₹${amount||'—'}</span></div>
+          <div class="row"><span class="k">🧾 Txn ID</span><span class="v">${txn}</span></div>
+          <div class="row"><span class="k">🔗 Reel</span><span class="v" style="word-break:break-all;font-size:11px;">${reel.substring(0,45)}${reel.length>45?'…':''}</span></div>
+        `;
+
+        // Try to notify Telegram WebApp if available
+        if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.sendData(JSON.stringify({ reel, txn, views, amount, uid }));
+        }
+      }, 900);
+    }
+  </script>
+</body>
+</html>
